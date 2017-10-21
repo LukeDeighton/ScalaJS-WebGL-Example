@@ -3,17 +3,17 @@ package example
 import example.GlobalState.gl
 import glmatrix.mat4
 import org.scalajs.dom
+import org.scalajs.dom.raw.WebGLBuffer
 import org.scalajs.dom.raw.WebGLRenderingContext._
 import org.scalajs.dom.{html, raw}
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSGlobalScope, JSImport}
 import scala.scalajs.js.typedarray.Float32Array
 
 object ScalaJSExample extends js.JSApp {
 
   def main(): Unit = {
-    val canvas = createCanvas(canvasSize = 1000)
+    val canvas = createCanvas(canvasSize = 700)
     dom.document.body.appendChild(canvas)
   }
 
@@ -32,38 +32,50 @@ object ScalaJSExample extends js.JSApp {
     canvas
   }
 
-  def drawScene(programInfo: ShaderProgramInfo, buffers: js.Array[Double]) = {
+  def drawScene(programInfo: ShaderProgramInfo, buffers: WebGLBuffer) = {
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
     gl.clearDepth(1.0)
     gl.enable(DEPTH_TEST)
     gl.depthFunc(LEQUAL)
     gl.clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT)
 
-    val fieldOfView = 45 * Math.PI / 180;   // in radians
-    val aspect = gl.canvas.clientWidth / gl.canvas.clientHeight
-    val zNear = 0.1
-    val zFar = 100.0
+    val fieldOfView = 45.0 * Math.PI / 180.0
+    val aspect = gl.canvas.width / gl.canvas.height
+
     val projectionMatrix = mat4.create()
 
-    mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar)
+    mat4.perspective(projectionMatrix, fieldOfView, aspect, near = 0.1, far = 100.0)
 
     val modelViewMatrix = mat4.create()
 
-    println(modelViewMatrix)
+    mat4.translate(modelViewMatrix, modelViewMatrix, js.Array(-0.0, 0.0, -6.0))
 
-    mat4.translate(modelViewMatrix, modelViewMatrix, List(-0.0, 0.0, -6.0))
+    gl.bindBuffer(ARRAY_BUFFER, buffers)
+    gl.vertexAttribPointer(
+      programInfo.attributeLocations.vertexPosition,
+      size = 2,
+      FLOAT,
+      normalized = false,
+      stride = 0,
+      offset = 0)
+    gl.enableVertexAttribArray(
+      programInfo.attributeLocations.vertexPosition)
 
-    println(modelViewMatrix)
-//    println(mat4)
-//    val mat = mat4.create()
+    gl.useProgram(programInfo.program)
 
-//    mat
+    gl.uniformMatrix4fv(
+      programInfo.uniformLocations.projectionMatrix,
+      transpose = false,
+      projectionMatrix)
+    gl.uniformMatrix4fv(
+      programInfo.uniformLocations.modelViewMatrix,
+      transpose = false,
+      modelViewMatrix)
 
-    //    val projectionMatrix = mat4.create()
-
+    gl.drawArrays(TRIANGLE_STRIP, first = 0, count = 4)
   }
 
-  def initialiseBuffers(): js.Array[Double] = {
+  def initialiseBuffers(): WebGLBuffer = {
     val positionBuffer = gl.createBuffer()
 
     gl.bindBuffer(ARRAY_BUFFER, positionBuffer)
@@ -77,12 +89,11 @@ object ScalaJSExample extends js.JSApp {
 
     gl.bufferData(ARRAY_BUFFER, new Float32Array(positions), STATIC_DRAW)
 
-    positions
+    positionBuffer
   }
 
   def loadShaderProgram(): ShaderProgramInfo = {
     val program = ShaderProgramLoader.load(SquareShaderSource)
-    gl.useProgram(program)
 
     ShaderProgramInfo(
       program = program,
@@ -93,29 +104,4 @@ object ScalaJSExample extends js.JSApp {
         modelViewMatrix = gl.getUniformLocation(program, "uModelViewMatrix")
       ))
   }
-
-  //
-  //    gl.clearColor(0.4, 0.0, 0.5, 0.8)
-  //    gl.clear(COLOR_BUFFER_BIT)
-  //
-  //
-  //    val vertices = new Float32Array(js.Array(
-  //      -0.3f,-0.3f,  0.3f,-0.3f,  0.0f,0.3f,  0.2f,0.2f,
-  //      0.6f,0.6f,  0.4f,-0.4f))
-  //
-  //    val buffer = gl.createBuffer()
-  //    gl.bindBuffer(ARRAY_BUFFER, buffer)
-  //    gl.bufferData(ARRAY_BUFFER, vertices, STATIC_DRAW)
-  //
-  //    val programDynamic = program.asInstanceOf[scala.scalajs.js.Dynamic]
-  //    programDynamic.color = gl.getUniformLocation(program, "color")
-  //
-  //    val temp2 = scala.scalajs.js.Array[Double]()
-  //    temp2.push(0f, 1f, 0.5f, 1.0f)
-  //    gl.uniform4fv(programDynamic.color.asInstanceOf[dom.raw.WebGLUniformLocation], temp2)
-  //
-  //    programDynamic.position = gl.getAttribLocation(program, "position")
-  //    gl.enableVertexAttribArray(programDynamic.position.asInstanceOf[Int])
-  //    gl.vertexAttribPointer(programDynamic.position.asInstanceOf[Int], 2, FLOAT, normalized = false, 0, 0)
-  //    gl.drawArrays(TRIANGLES, 0, vertices.length / 2)
 }
