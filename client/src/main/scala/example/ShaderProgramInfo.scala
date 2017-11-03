@@ -6,6 +6,6 @@ case class ShaderProgramInfo(program: WebGLProgram,
                              attributeLocations: AttributeLocations,
                              uniformLocations: UniformLocations)
 
-case class AttributeLocations(vertexPosition: Int)
+case class AttributeLocations(vertexPosition: Int, vertexColour: Int)
 
 case class UniformLocations(projectionMatrix: WebGLUniformLocation, modelViewMatrix: WebGLUniformLocation)

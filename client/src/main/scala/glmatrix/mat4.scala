@@ -15,8 +15,9 @@ object mat4 extends js.Object {
 
   def perspective(projectionMatrix: Matrix4, fieldOfView: Double, aspect: Double, near: Double, far: Double): Unit = js.native
 
-  //TODO could make a vec3 class
   def translate(out: Matrix4, a: Matrix4, v: js.Array[Double]): Unit = js.native
+
+  def rotate(out: Matrix4, a: Matrix4, rad: Double, axis: js.Array[Double]): Unit = js.native
 }
 
 @js.native
