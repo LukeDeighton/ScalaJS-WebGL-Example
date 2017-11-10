@@ -24,6 +24,9 @@ object ScalaJSExample extends js.JSApp {
     previousTime = timeSeconds
 
     squareRotation += deltaTime
+    translationX = Math.sin(squareRotation)
+    translationY = Math.cos(squareRotation)
+    translationZ = -10 + 5 * Math.sin(squareRotation * 0.5)
 
     drawScene(shaderProgramInfo, positionBuffer, colourBuffer, indicesBuffer)
 
@@ -62,10 +65,11 @@ object ScalaJSExample extends js.JSApp {
 
     val modelViewMatrix = mat4.create()
 
-    mat4.translate(modelViewMatrix, modelViewMatrix, js.Array(-0.0, 0.0, -6.0))
+    mat4.translate(modelViewMatrix, modelViewMatrix, js.Array(translationX, translationY, translationZ))
 
-    mat4.rotate(modelViewMatrix, modelViewMatrix, GlobalState.squareRotation, js.Array(0.0, 0.0, 1.0))
-    mat4.rotate(modelViewMatrix, modelViewMatrix, GlobalState.squareRotation * 0.7, js.Array(0.0, 1.0, 0.0))
+    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation * 0.5, js.Array(0.0, 0.0, 1.0))
+    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation * 0.5, js.Array(0.0, 1.0, 0.0))
+    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation * -0.5, js.Array(0.0, 0.0, 1.0))
 
     gl.useProgram(programInfo.program)
 

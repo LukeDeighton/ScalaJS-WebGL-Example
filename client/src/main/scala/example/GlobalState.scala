@@ -14,4 +14,7 @@ object GlobalState {
   var positionBuffer: WebGLBuffer = _
   var colourBuffer: WebGLBuffer = _
   var indicesBuffer: WebGLBuffer = _
+  var translationX: Double = 0.0
+  var translationY: Double = 0.0
+  var translationZ: Double = 0.0
 }
