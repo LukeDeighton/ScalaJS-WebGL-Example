@@ -13,4 +13,5 @@ object GlobalState {
   var shaderProgramInfo: ShaderProgramInfo = _
   var positionBuffer: WebGLBuffer = _
   var colourBuffer: WebGLBuffer = _
+  var indicesBuffer: WebGLBuffer = _
 }
