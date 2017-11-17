@@ -9,7 +9,7 @@ object GlobalState {
   var gl: WebGL = _
 
   var previousTime: Double = 0.0
-  var squareRotation: Double = 0.0
+  var rotation: Double = 0.0
   var shaderProgramInfo: ShaderProgramInfo = _
   var positionBuffer: WebGLBuffer = _
   var colourBuffer: WebGLBuffer = _

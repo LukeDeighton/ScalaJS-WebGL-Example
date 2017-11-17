@@ -23,10 +23,10 @@ object ScalaJSExample extends js.JSApp {
     val deltaTime = timeSeconds - previousTime
     previousTime = timeSeconds
 
-    squareRotation += deltaTime
-    translationX = Math.sin(squareRotation)
-    translationY = Math.cos(squareRotation)
-    translationZ = -10 + 5 * Math.sin(squareRotation * 0.5)
+    rotation += deltaTime
+    translationX = Math.sin(rotation)
+    translationY = Math.cos(rotation)
+    translationZ = -10 + 5 * Math.sin(rotation * 0.5)
 
     drawScene(shaderProgramInfo, positionBuffer, colourBuffer, indicesBuffer)
 
@@ -67,9 +67,9 @@ object ScalaJSExample extends js.JSApp {
 
     mat4.translate(modelViewMatrix, modelViewMatrix, js.Array(translationX, translationY, translationZ))
 
-    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation * 0.5, js.Array(0.0, 0.0, 1.0))
-    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation * 0.5, js.Array(0.0, 1.0, 0.0))
-    mat4.rotate(modelViewMatrix, modelViewMatrix, squareRotation * -0.5, js.Array(0.0, 0.0, 1.0))
+    mat4.rotate(modelViewMatrix, modelViewMatrix, rotation * 0.5, js.Array(0.0, 0.0, 1.0))
+    mat4.rotate(modelViewMatrix, modelViewMatrix, rotation * 0.5, js.Array(0.0, 1.0, 0.0))
+    mat4.rotate(modelViewMatrix, modelViewMatrix, rotation * -0.5, js.Array(0.0, 0.0, 1.0))
 
     gl.useProgram(programInfo.program)
 
@@ -157,7 +157,7 @@ object ScalaJSExample extends js.JSApp {
     val faceColours = js.Array(
       js.Array(1.0,  1.0,  1.0,  1.0),    // Front face: white
       js.Array(1.0,  0.0,  0.0,  1.0),    // Back face: red
-      js.Array(0.0,  1.0,  0.0,  1.0),    // Top face: green
+      js.Array(0.6,  0.6,  0.0,  1.0),    // Top face: green
       js.Array(0.0,  0.0,  1.0,  1.0),    // Bottom face: blue
       js.Array(1.0,  1.0,  0.0,  1.0),    // Right face: yellow
       js.Array(1.0,  0.0,  1.0,  1.0),    // Left face: purple
